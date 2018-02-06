@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 #-*- encoding: utf-8 -*-
 
-import telebot, requests
+import telebot
+from datetime import datetime
 from telebot import types
 from apikey import tgbottoken, authedchat
 from ymodules.m_kd100 import *
@@ -79,11 +80,17 @@ def geoipinfo(msg):
 @bot.message_handler(content_types=['document'])
 def handle_file(msg):
     cid = msg.chat.id
+    MIMErecfile = open('mimetype.rec','w+')
     if (cid in authedchat):
         with open('tmpdwnld.tmp', 'wb') as newtmp:
             file_info = bot.get_file(msg.document.file_id)
+            mime = str(file_info.mime_type)
+            time = str(datetime.now())
+            mimerec = time + ' ' + mime + ' \n'
+            MIMErecfile.write(mimerec)
             downloaded_file = bot.download_file(file_info.file_path)
             newtmp.write(downloaded_file)
+            bot.send_message(cid,"File Successfully Received.")
     else:
         pass
 
